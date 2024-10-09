@@ -1,12 +1,18 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
+const asyncHandler = require('express-async-handler');
 
 const courses = [
     { id: '1', title: "JS" },
     { id: '2', title: "Javascript" },
     { id: '3', title: "Python" },
 ]
+
+function getDB() {
+    // Error while executing
+    throw new Error("Error DB")
+}
 /**
  * Authenticate
  * Authorize
@@ -26,6 +32,25 @@ function authroize(req, res, next) {
     })
 }
 
+function handleError(error, req, res, next) {
+    // console.log("Hello")
+    // console.log(error.message)
+    return res.json(error.message)
+}
+
+function checkId(req, res, next) {
+    const id = req.params.id
+    const course = courses.find((item) => {
+        return item.id == id
+    })
+    if (!course) {
+        return res.status(404).json({
+            error: "Resource Not Found"
+        })
+    }
+    next()
+}
+
 // app.use(bodyParser.urlencoded())
 app.use(bodyParser.json())
 app.use(logger)
@@ -34,16 +59,21 @@ app.use(logger)
 /**
  * Get all courses
  */
-app.get('/courses', function (req, res) {
-    console.log(req.query)
-    // Pass req query to database
-    return res.status(202).send("Hello")
-})
+app.get('/courses', asyncHandler(function (req, res) {
+    // console.log(req.query)
+    // // Pass req query to database
+    // return res.status(202).send("Hello")
+    throw Error("Error course!")
+}))
+
+app.get('/db', asyncHandler((req, res) => {
+    getDB()
+}))
 
 /**
  * Get a course by ID
  */
-app.get('/courses/:id', (req, res) => {
+app.get('/courses/:id', checkId, (req, res) => {
     const id = req.params.id
     const course = courses.find((item) => {
         return item.id == id
@@ -55,6 +85,7 @@ app.get('/courses/:id', (req, res) => {
 app.post('/courses', authroize, (req, res) => {
     console.log(req.body)
     return res.json(req.body)
+
 })
 
 // Conventional function
@@ -71,6 +102,8 @@ app.get('/shortcut', (req, res) => {
         message: "Hello World"
     })
 })
+
+app.use(handleError)
 
 app.listen(3000, function () {
     console.log("Server is running on port 3000")
