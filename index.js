@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
@@ -14,6 +16,6 @@ app.use('/courses', courseRouter)
 
 app.use(handleError)
 
-app.listen(3000, function () {
-    console.log("Server is running on port 3000")
+app.listen(process.env.PORT, function () {
+    console.log(`Server is running on port ${process.env.PORT}`)
 })
