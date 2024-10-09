@@ -1,9 +1,18 @@
 const express = require('express')
-
+const bodyParser = require('body-parser')
 const app = express()
+
+// app.use(bodyParser.urlencoded())
+app.use(bodyParser.json())
 
 app.get('/courses', function (req, res) {
     res.status(202).send("Hello")
+})
+
+// Allow user to create courses
+app.post('/courses', (req, res) => {
+    console.log(req.body)
+    res.json(req.body)
 })
 
 // Conventional function
