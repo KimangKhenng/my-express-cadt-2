@@ -2,6 +2,11 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
 
+const courses = [
+    { id: '1', title: "JS" },
+    { id: '2', title: "Javascript" },
+    { id: '3', title: "Python" },
+]
 /**
  * Authenticate
  * Authorize
@@ -26,8 +31,24 @@ app.use(bodyParser.json())
 app.use(logger)
 
 
+/**
+ * Get all courses
+ */
 app.get('/courses', function (req, res) {
+    console.log(req.query)
+    // Pass req query to database
     return res.status(202).send("Hello")
+})
+
+/**
+ * Get a course by ID
+ */
+app.get('/courses/:id', (req, res) => {
+    const id = req.params.id
+    const course = courses.find((item) => {
+        return item.id == id
+    })
+    return res.json(course)
 })
 
 // Allow user to create courses
