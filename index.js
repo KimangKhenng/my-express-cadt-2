@@ -35,7 +35,7 @@ function authroize(req, res, next) {
 function handleError(error, req, res, next) {
     // console.log("Hello")
     // console.log(error.message)
-    return res.json(error.message)
+    return res.status(500).json(error.message)
 }
 
 function checkId(req, res, next) {
@@ -60,10 +60,9 @@ app.use(logger)
  * Get all courses
  */
 app.get('/courses', asyncHandler(function (req, res) {
-    // console.log(req.query)
-    // // Pass req query to database
-    // return res.status(202).send("Hello")
-    throw Error("Error course!")
+    console.log(req.query)
+    // Pass req query to database
+    return res.json(courses)
 }))
 
 app.get('/db', asyncHandler((req, res) => {
@@ -81,10 +80,44 @@ app.get('/courses/:id', checkId, (req, res) => {
     return res.json(course)
 })
 
+app.delete('/courses/:id', (req, res) => {
+    const id = req.params.id
+    const course = courses.find((item) => {
+        return item.id == id
+    })
+    if (course) {
+        const index = courses.findIndex((item) => {
+            return item == course
+        })
+        console.log(index)
+        courses.splice(index, 1)
+        return res.json({
+            operation: "deleted",
+            item: course
+        })
+    }
+    return res.json("Course not found")
+})
+
 // Allow user to create courses
-app.post('/courses', authroize, (req, res) => {
-    console.log(req.body)
-    return res.json(req.body)
+app.post('/courses', (req, res) => {
+    const newCourse = {
+        id: req.body.id,
+        title: req.body.title,
+    }
+    const exist = courses.some((item) => {
+        return item.id == newCourse.id
+    })
+    if (exist) {
+        return res.status(400).json({
+            message: "Course ID already existt"
+        })
+    }
+    courses.push(newCourse)
+    return res.json({
+        operation: "Success",
+        item: newCourse
+    })
 
 })
 
