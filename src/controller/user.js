@@ -32,7 +32,7 @@ const deleteUserById = asyncHandler(async (req, res) => {
 
 const updateUserById = asyncHandler(async (req, res) => {
     const id = req.params.id
-    const result = await UserModel.updateOne({ ...req.body, id })
+    const result = await UserModel.updateOne({ _id: id }, req.body)
     return res.json(result)
 })
 

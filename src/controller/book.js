@@ -32,7 +32,7 @@ const deleteBookbyId = asyncHandler(async (req, res) => {
 
 const updateBookById = asyncHandler(async (req, res) => {
     const id = req.params.id
-    const result = await BookModel.updateOne({ ...req.body, id })
+    const result = await BookModel.updateOne({ _id: id }, req.body)
     return res.json(result)
 })
 
