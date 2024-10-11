@@ -31,7 +31,8 @@ const deleteCoursebyId = asyncHandler(async (req, res) => {
 
 const updateCourseById = asyncHandler(async (req, res) => {
     const id = req.params.id
-    const result = await CourseModel.updateOne({ ...req.body, id })
+    const result = await CourseModel.updateOne({ _id: id }, req.body)
+    // const result = await CourseModel.findByIdAndUpdate(id, req.body)
     return res.json(result)
 })
 
