@@ -1,10 +1,10 @@
 const mongoose = require('mongoose')
 
 const courseSchema = new mongoose.Schema({
-    price: { type: Number },
-    title: { type: String },
-    category: { type: String },
-    author: { type: String }
+    price: { type: Number, required: true },
+    title: { type: String, required: true },
+    category: { type: String, required: true },
+    author: { type: String, required: true }
 })
 
 const CourseModel = mongoose.model('Courses', courseSchema)

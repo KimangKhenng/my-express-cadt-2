@@ -1,53 +1,44 @@
 const CourseModel = require('../models/course.js')
+const asyncHandler = require('express-async-handler')
 
 /**
  * Controller is a specific function to handle specific tasks
  */
 
-async function createCourse(req, res) {
-    const newCourse = {
-        id: req.body.id,
-        title: req.body.title,
-        price: req.body.price,
-        category: req.body.category,
-    }
-
-    const course = new CourseModel(newCourse)
+const createCourse = asyncHandler(async (req, res) => {
+    const course = new CourseModel(req.body)
     const result = await course.save()
     return res.json(result)
-}
+})
 
-function getCourseById(req, res) {
+const getCourseById = asyncHandler(async (req, res) => {
     const id = req.params.id
-    const course = courses.find((item) => {
-        return item.id == id
-    })
+    const course = await CourseModel.findById(id)
     return res.json(course)
-}
+})
 
-async function getCourses(req, res) {
+const getCourses = asyncHandler(async (req, res) => {
     // Get all courses 
     const courses = await CourseModel.find()
     return res.json(courses)
-}
+})
 
-function deleteCourse(req, res) {
+const deleteCourse = asyncHandler(async (req, res) => {
     const id = req.params.id
-    const course = courses.find((item) => {
-        return item.id == id
-    })
-    if (course) {
-        const index = courses.findIndex((item) => {
-            return item == course
-        })
-        console.log(index)
-        courses.splice(index, 1)
-        return res.json({
-            operation: "deleted",
-            item: course
-        })
-    }
-    return res.json("Course not found")
-}
+    const result = await CourseModel.deleteOne({ _id: id })
+    return res.json(result)
+})
 
-module.exports = { createCourse, getCourseById, getCourses, deleteCourse }
+const updateById = asyncHandler(async (req, res) => {
+    const id = req.params.id
+    const result = await CourseModel.updateOne({ ...req.body, id })
+    return res.json(result)
+})
+
+module.exports = {
+    createCourse,
+    getCourseById,
+    getCourses,
+    deleteCourse,
+    updateById
+}
