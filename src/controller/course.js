@@ -23,13 +23,13 @@ const getCourses = asyncHandler(async (req, res) => {
     return res.json(courses)
 })
 
-const deleteCourse = asyncHandler(async (req, res) => {
+const deleteCoursebyId = asyncHandler(async (req, res) => {
     const id = req.params.id
     const result = await CourseModel.deleteOne({ _id: id })
     return res.json(result)
 })
 
-const updateById = asyncHandler(async (req, res) => {
+const updateCourseById = asyncHandler(async (req, res) => {
     const id = req.params.id
     const result = await CourseModel.updateOne({ ...req.body, id })
     return res.json(result)
@@ -39,6 +39,6 @@ module.exports = {
     createCourse,
     getCourseById,
     getCourses,
-    deleteCourse,
-    updateById
+    deleteCoursebyId,
+    updateCourseById
 }

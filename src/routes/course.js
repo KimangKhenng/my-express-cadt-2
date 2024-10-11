@@ -3,15 +3,15 @@ const {
     createCourse,
     getCourseById,
     getCourses,
-    deleteCourse,
-    updateById
+    deleteCoursebyId,
+    updateCourseById
 } = require('../controller/course.js')
-const router = express.Router();
+const courseRouter = express.Router();
 
-router.post('/', createCourse)
-router.get('/', getCourses)
-router.get('/:id', getCourseById)
-router.delete('/:id', deleteCourse)
-router.put('/:id', updateById)
+courseRouter.post('/', createCourse)
+courseRouter.get('/', getCourses)
+courseRouter.get('/:id', getCourseById)
+courseRouter.delete('/:id', deleteCoursebyId)
+courseRouter.put('/:id', updateCourseById)
 
-module.exports = router
+module.exports = courseRouter

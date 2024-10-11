@@ -2,22 +2,28 @@ require('dotenv').config()
 
 const express = require('express')
 const bodyParser = require('body-parser')
-const app = express()
-// const asyncHandler = require('express-async-handler')
-const courseRouter = require('./src/routes/course.js')
+
 const { logger, handleError } = require('./src/middlewares/index.js')
 
 const dbConnect = require('./src/db/db.js')
+const bookRouter = require('./src/routes/book.js')
+const userRouter = require('./src/routes/user.js')
+const courseRouter = require('./src/routes/course.js')
+
+const app = express()
 
 dbConnect().catch((err) => {
-    console.log("Error DB")
+    console.log(err)
 })
 
 // app.use(bodyParser.urlencoded())
 app.use(bodyParser.json())
 app.use(logger)
 
+// Router
 app.use('/courses', courseRouter)
+app.use('/books', bookRouter)
+app.use('/users', userRouter)
 
 app.use(handleError)
 
