@@ -19,8 +19,9 @@ const getBookById = asyncHandler(async (req, res) => {
 })
 
 const getBooks = asyncHandler(async (req, res) => {
+    const { join } = req.query
     // Get all courses 
-    const courses = await BookModel.find()
+    const courses = await BookModel.find().populate(join)
     return res.json(courses)
 })
 
