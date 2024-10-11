@@ -1,27 +1,20 @@
-const courses = require('../models/course.js')
+const CourseModel = require('../models/course.js')
 
 /**
  * Controller is a specific function to handle specific tasks
  */
 
-function createCourse(req, res) {
+async function createCourse(req, res) {
     const newCourse = {
         id: req.body.id,
         title: req.body.title,
+        price: req.body.price,
+        category: req.body.category,
     }
-    const exist = courses.some((item) => {
-        return item.id == newCourse.id
-    })
-    if (exist) {
-        return res.status(400).json({
-            message: "Course ID already existt"
-        })
-    }
-    courses.push(newCourse)
-    return res.json({
-        operation: "Success",
-        item: newCourse
-    })
+
+    const course = new CourseModel(newCourse)
+    const result = await course.save()
+    return res.json(result)
 }
 
 function getCourseById(req, res) {
@@ -32,7 +25,9 @@ function getCourseById(req, res) {
     return res.json(course)
 }
 
-function getCourses(req, res) {
+async function getCourses(req, res) {
+    // Get all courses 
+    const courses = await CourseModel.find()
     return res.json(courses)
 }
 
