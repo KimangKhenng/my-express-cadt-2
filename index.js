@@ -7,6 +7,11 @@ const app = express()
 const courseRouter = require('./src/routes/course.js')
 const { logger, handleError } = require('./src/middlewares/index.js')
 
+const dbConnect = require('./src/db/db.js')
+
+dbConnect().catch((err) => {
+    console.log("Error DB")
+})
 
 // app.use(bodyParser.urlencoded())
 app.use(bodyParser.json())
