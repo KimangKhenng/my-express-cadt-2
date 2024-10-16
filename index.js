@@ -4,7 +4,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const passport = require('passport');
 
-const { logger, handleError, verifyJWT } = require('./src/middlewares/index.js')
+const { logger, handleError, verifyJWT, handleValidation } = require('./src/middlewares/index.js')
 
 const dbConnect = require('./src/db/db.js')
 const bookRouter = require('./src/routes/book.js')

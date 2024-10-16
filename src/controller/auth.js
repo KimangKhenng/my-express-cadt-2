@@ -5,9 +5,6 @@ const jwt = require('jsonwebtoken')
 
 const signUp = asyncHandler(async (req, res) => {
     const { firstname, lastname, email, password, confirmPassword } = req.body
-    if (password !== confirmPassword) {
-        throw new Error("Password not matched!")
-    }
     const hashedPassword = await bcrypt.hash(password, 10)
     const username = Date.now() + firstname
 

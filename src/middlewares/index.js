@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler')
 const jwt = require('jsonwebtoken');
 const UserModel = require('../models/user');
+const { validationResult } = require('express-validator');
 
 const verifyJWT = asyncHandler(async (req, res, next) => {
     const token = req.headers.authorization
@@ -46,4 +47,12 @@ function checkId(req, res, next) {
     next()
 }
 
-module.exports = { handleError, logger, verifyJWT }
+function handleValidation(req, res, next) {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() })
+    }
+    next()
+}
+
+module.exports = { handleError, logger, verifyJWT, handleValidation }
