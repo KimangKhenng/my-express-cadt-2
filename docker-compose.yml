@@ -9,6 +9,7 @@ services:
     volumes:
       - ./src:/app/src
       - ./index.js:/app/index.js
+      - .env:/app/.env
   mongodb:
     build:
       context: .

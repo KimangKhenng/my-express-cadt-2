@@ -9,6 +9,7 @@ const dbConnect = require('./src/db/db.js')
 const bookRouter = require('./src/routes/book.js')
 const userRouter = require('./src/routes/user.js')
 const courseRouter = require('./src/routes/course.js')
+const authRouter = require('./src/routes/auth.js')
 
 const app = express()
 
@@ -24,6 +25,7 @@ app.use(logger)
 app.use('/courses', courseRouter)
 app.use('/books', bookRouter)
 app.use('/users', userRouter)
+app.use('/auth', authRouter)
 
 app.use(handleError)
 
