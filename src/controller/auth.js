@@ -31,7 +31,7 @@ const login = asyncHandler(async (req, res) => {
     if (!user) {
         return res.status(404).json("User not found!")
     }
-    const compareResult = bcrypt.compare(password, user.password)
+    const compareResult = await bcrypt.compare(password, user.password)
     if (!compareResult) {
         return res.status(401).json("Incorrect email or password")
     }
