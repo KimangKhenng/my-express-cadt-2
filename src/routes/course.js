@@ -5,7 +5,7 @@ const {
     getCourses,
     deleteCoursebyId,
     updateCourseById
-} = require('../controller/course.js')
+} = require('../controller/course.js');
 const courseRouter = express.Router();
 
 courseRouter.post('/', createCourse)

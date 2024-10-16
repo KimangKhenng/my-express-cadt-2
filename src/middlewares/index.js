@@ -1,3 +1,16 @@
+const asyncHandler = require('express-async-handler')
+const jwt = require('jsonwebtoken')
+
+const verifyJWT = asyncHandler(async (req, res, next) => {
+    const token = req.headers.authorization
+    if (!token) {
+        return res.status(401).json({ message: 'Authentication failed' });
+    }
+    const extract = token.split(' ')[1]
+    const decoded = jwt.verify(extract, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+})
 function logger(req, res, next) {
     // console.log(req)
     console.log("Incoming request", req.rawHeaders[3])
@@ -31,4 +44,4 @@ function checkId(req, res, next) {
     next()
 }
 
-module.exports = { handleError, logger }
+module.exports = { handleError, logger, verifyJWT }
