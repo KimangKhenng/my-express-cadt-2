@@ -14,6 +14,8 @@ const numberOfCourse = 1000
 const numberOfUsers = 100
 const numberOfBooks = 500
 
+console.log(Date.now())
+
 async function generate() {
     for (let i = 0; i < numberOfCourse; i++) {
         const newCourse = new CourseModel({
