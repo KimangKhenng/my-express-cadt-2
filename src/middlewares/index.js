@@ -65,22 +65,35 @@ const cacheInterceptor = (ttl) => responseHandler().for(req => {
     return codes.includes(res.statusCode)
 }).getString(async (body, req, res) => {
     const { originalUrl } = res.req
-    console.log("Called")
     redisClient.set(originalUrl, body, {
         EX: ttl
     })
 })
 
+const invalidateInterceptor = responseHandler().for(req => {
+    const methods = ["POST", "PUT", "PATCH", "DELETE"]
+    return methods.includes(req.method)
+}).if(res => {
+    const codes = [200, 201, 202, 203, 204]
+    return codes.includes(res.statusCode)
+}).getString(async (body, req, res) => {
+    const { baseUrl } = req
+    console.log(baseUrl)
+    const keys = await redisClient.keys(`${baseUrl}*`)
+    console.log(keys)
+    redisClient.del(keys[0])
+})
+
 const cacheMiddleware = asyncHandler(async (req, res, next) => {
     const { originalUrl } = req
-
-    const data = await redisClient.get(originalUrl)
-    if (data !== null) {
-        return res.json(JSON.parse(data))
-    } {
-        next()
+    if (req.method == "GET") {
+        const data = await redisClient.get(originalUrl)
+        if (data !== null) {
+            return res.json(JSON.parse(data))
+        }
     }
+    next()
 })
 
 
-module.exports = { handleError, logger, verifyJWT, handleValidation, cacheInterceptor, cacheMiddleware }
+module.exports = { handleError, logger, verifyJWT, handleValidation, cacheInterceptor, cacheMiddleware, invalidateInterceptor }

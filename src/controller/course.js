@@ -9,6 +9,10 @@ const redisClient = require('../redis/index.js')
 const createCourse = asyncHandler(async (req, res) => {
     const course = new CourseModel(req.body)
     const result = await course.save()
+    // Invalidate Cache
+    // const { baseUrl } = req
+    // const keys = await redisClient.keys(`${baseUrl}*`)
+    // redisClient.del(keys[0])
     return res.json(result)
 })
 

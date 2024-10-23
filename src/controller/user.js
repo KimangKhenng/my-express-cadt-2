@@ -1,6 +1,7 @@
 
 const asyncHandler = require('express-async-handler')
 const UserModel = require('../models/user.js')
+const redisClient = require('../redis/index.js')
 
 /**
  * Controller is a specific function to handle specific tasks
@@ -9,6 +10,10 @@ const UserModel = require('../models/user.js')
 const createUser = asyncHandler(async (req, res) => {
     const course = new UserModel(req.body)
     const result = await course.save()
+    // Invalidate Cache
+    // const { baseUrl } = req
+    // const keys = await redisClient.keys(`${baseUrl}*`)
+    // redisClient.del(keys[0])
     return res.json(result)
 })
 

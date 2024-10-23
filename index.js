@@ -4,7 +4,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const passport = require('passport');
 
-const { logger, handleError, verifyJWT, handleValidation, cacheMiddleware, cacheInterceptor } = require('./src/middlewares/index.js')
+const { logger, handleError, verifyJWT, handleValidation, cacheMiddleware, cacheInterceptor, invalidateInterceptor } = require('./src/middlewares/index.js')
 
 const dbConnect = require('./src/db/db.js')
 const bookRouter = require('./src/routes/book.js')
@@ -32,6 +32,7 @@ app.use('/auth', authRouter)
 
 app.use(cacheMiddleware)
 app.use(cacheInterceptor(30 * 60))
+app.use(invalidateInterceptor)
 app.use('/courses', passport.authenticate('jwt', { session: false }), courseRouter)
 app.use('/books', verifyJWT, bookRouter)
 app.use('/users', verifyJWT, userRouter)
