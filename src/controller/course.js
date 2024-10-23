@@ -1,5 +1,6 @@
 const CourseModel = require('../models/course.js')
 const asyncHandler = require('express-async-handler')
+const redisClient = require('../redis/index.js')
 
 /**
  * Controller is a specific function to handle specific tasks
@@ -18,10 +19,23 @@ const getCourseById = asyncHandler(async (req, res) => {
 })
 
 const getCourses = asyncHandler(async (req, res) => {
+    // console.log("Hello")
     // Get all courses 
-    console.log(req.user)
-    const courses = await CourseModel.find()
-    return res.json(courses)
+    const key = '/courses'
+    const result = await redisClient.get(key)
+    // console.log(result)
+    if (!result) {
+        // Query operation takes time
+        console.log("Consuming Time")
+        const courses = await CourseModel.find()
+        redisClient.set(key, JSON.stringify(courses), {
+            EX: 30
+        })
+        return res.json(courses)
+    }
+    const course = JSON.parse(result)
+    // console.log(result)
+    return res.json(course)
 })
 
 const deleteCoursebyId = asyncHandler(async (req, res) => {

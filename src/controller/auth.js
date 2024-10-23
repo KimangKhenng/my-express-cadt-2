@@ -19,7 +19,6 @@ const signUp = asyncHandler(async (req, res) => {
     })
 
     const result = await user.save()
-    console.log(typeof (result))
     result.password = ''
     return res.json(result)
 })

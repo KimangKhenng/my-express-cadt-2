@@ -11,21 +11,21 @@ const bookRouter = require('./src/routes/book.js')
 const userRouter = require('./src/routes/user.js')
 const courseRouter = require('./src/routes/course.js')
 const authRouter = require('./src/routes/auth.js');
-const jwtStrategy = require('./src/common/strategy/jwt.js')
+const jwtStrategy = require('./src/common/strategy/jwt.js');
+const redisClient = require('./src/redis/index.js');
 const app = express()
 
 dbConnect().catch((err) => {
     console.log(err)
 })
+redisClient.connect()
 
 passport.use(jwtStrategy)
 
 // app.use(bodyParser.urlencoded())
 app.use(bodyParser.json())
-app.use(logger)
+// app.use(logger)
 
-console.log(Date.now())
-console.log(new Date())
 // Router
 app.use('/courses', passport.authenticate('jwt', { session: false }), courseRouter)
 app.use('/books', verifyJWT, bookRouter)
