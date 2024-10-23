@@ -61,7 +61,8 @@ const handleGoogle = asyncHandler(async (req, res) => {
             },
         });
     const userprofile = response.data;
-    // Register in our data
+    // Register in our database if user not in database yet and Sign JWT and return
+    // If already registered sign JWT token and return
     return res.json(userprofile)
 })
 
