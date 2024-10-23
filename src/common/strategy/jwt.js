@@ -8,7 +8,7 @@ const opts = {
 };
 
 const jwtStrategy = new Strategy(opts, asyncHandler(async (payload, done) => {
-    const user = UserModel.findById(payload.id)
+    const user = await UserModel.findById(payload.id)
     if (!user) {
         done(null, false)
     }

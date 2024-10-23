@@ -40,4 +40,15 @@ const login = asyncHandler(async (req, res) => {
     return res.json({ token })
 })
 
-module.exports = { signUp, login }
+const handleGoogle = asyncHandler(async (req, res) => {
+    const query = req.query
+    console.log(query)
+    return res.json(query)
+})
+
+const showGoogleOAuth = (req, res) => {
+    const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${process.env.GOOGLE_REDIRECT_URL}&response_type=code&scope=profile%20email&access_type=offline`;
+    return res.redirect(googleAuthUrl)
+}
+
+module.exports = { signUp, login, handleGoogle, showGoogleOAuth }
