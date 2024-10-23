@@ -19,23 +19,26 @@ const getCourseById = asyncHandler(async (req, res) => {
 })
 
 const getCourses = asyncHandler(async (req, res) => {
-    // console.log("Hello")
-    // Get all courses 
-    const key = '/courses'
-    const result = await redisClient.get(key)
-    // console.log(result)
-    if (!result) {
-        // Query operation takes time
-        console.log("Consuming Time")
-        const courses = await CourseModel.find()
-        redisClient.set(key, JSON.stringify(courses), {
-            EX: 30
-        })
-        return res.json(courses)
-    }
-    const course = JSON.parse(result)
-    // console.log(result)
-    return res.json(course)
+    // // console.log("Hello")
+    // // Get all courses 
+    // const key = '/courses'
+    // // Check if cache exist
+    // const result = await redisClient.get(key)
+    // // console.log(result)
+    // if (!result) {
+    //     // Query operation takes time
+    //     console.log("Consuming Time")
+    //     const courses = await CourseModel.find()
+    //     redisClient.set(key, JSON.stringify(courses), {
+    //         EX: 30
+    //     })
+    //     return res.json(courses)
+    // }
+    // const course = JSON.parse(result)
+    // // console.log(result)
+    // return res.json(course)
+    const courses = await CourseModel.find()
+    return res.json(courses)
 })
 
 const deleteCoursebyId = asyncHandler(async (req, res) => {

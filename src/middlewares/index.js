@@ -1,7 +1,10 @@
 const asyncHandler = require('express-async-handler')
 const jwt = require('jsonwebtoken');
 const UserModel = require('../models/user');
-const { validationResult } = require('express-validator');
+const { validationResult } = require('express-validator')
+
+const { responseHandler } = require('express-intercept');
+const redisClient = require('../redis');
 
 const verifyJWT = asyncHandler(async (req, res, next) => {
     const token = req.headers.authorization
@@ -55,4 +58,29 @@ function handleValidation(req, res, next) {
     next()
 }
 
-module.exports = { handleError, logger, verifyJWT, handleValidation }
+const cacheInterceptor = (ttl) => responseHandler().for(req => {
+    return req.method == "GET"
+}).if(res => {
+    const codes = [200, 201, 202, 203, 204]
+    return codes.includes(res.statusCode)
+}).getString(async (body, req, res) => {
+    const { originalUrl } = res.req
+    console.log("Called")
+    redisClient.set(originalUrl, body, {
+        EX: ttl
+    })
+})
+
+const cacheMiddleware = asyncHandler(async (req, res, next) => {
+    const { originalUrl } = req
+
+    const data = await redisClient.get(originalUrl)
+    if (data !== null) {
+        return res.json(JSON.parse(data))
+    } {
+        next()
+    }
+})
+
+
+module.exports = { handleError, logger, verifyJWT, handleValidation, cacheInterceptor, cacheMiddleware }

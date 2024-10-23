@@ -4,7 +4,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const passport = require('passport');
 
-const { logger, handleError, verifyJWT, handleValidation } = require('./src/middlewares/index.js')
+const { logger, handleError, verifyJWT, handleValidation, cacheMiddleware, cacheInterceptor } = require('./src/middlewares/index.js')
 
 const dbConnect = require('./src/db/db.js')
 const bookRouter = require('./src/routes/book.js')
@@ -27,10 +27,15 @@ app.use(bodyParser.json())
 // app.use(logger)
 
 // Router
+app.use('/auth', authRouter)
+
+
+app.use(cacheMiddleware)
+app.use(cacheInterceptor(30 * 60))
 app.use('/courses', passport.authenticate('jwt', { session: false }), courseRouter)
 app.use('/books', verifyJWT, bookRouter)
 app.use('/users', verifyJWT, userRouter)
-app.use('/auth', authRouter)
+
 
 app.use(handleError)
 

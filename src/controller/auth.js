@@ -26,13 +26,15 @@ const signUp = asyncHandler(async (req, res) => {
 const login = asyncHandler(async (req, res) => {
     const { email, password } = req.body
     const user = await UserModel.findOne({ email: email })
+
+    if (!user) {
+        return res.status(404).json("User not found!")
+    }
     // SSO Logics
     if (user.type == "SSO") {
         return res.status(405).json("Only Password User Allowed")
     }
-    if (!user) {
-        return res.status(404).json("User not found!")
-    }
+    
     const compareResult = await bcrypt.compare(password, user.password)
     if (!compareResult) {
         return res.status(401).json("Incorrect email or password")
