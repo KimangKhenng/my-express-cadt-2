@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt')
 const UserModel = require('../models/user')
 const jwt = require('jsonwebtoken')
 const axios = require('axios')
+const { signJWT } = require('../utils')
 
 const signUp = asyncHandler(async (req, res) => {
     const { firstname, lastname, email, password, confirmPassword } = req.body
@@ -26,6 +27,10 @@ const signUp = asyncHandler(async (req, res) => {
 const login = asyncHandler(async (req, res) => {
     const { email, password } = req.body
     const user = await UserModel.findOne({ email: email })
+    // SSO Logics
+    if (user.type == "SSO") {
+        return res.status(405).json("Only Password User Allowed")
+    }
     if (!user) {
         return res.status(404).json("User not found!")
     }
@@ -34,10 +39,7 @@ const login = asyncHandler(async (req, res) => {
         return res.status(401).json("Incorrect email or password")
     }
     // Sign JWT Token
-    const token = jwt.sign(
-        { id: user._id, email: user.email, username: user.username },
-        process.env.JWT_SECRET, { expiresIn: '1h' }
-    )
+    const token = signJWT(user._id, user.email, user.username)
     return res.json({ token })
 })
 
@@ -61,9 +63,24 @@ const handleGoogle = asyncHandler(async (req, res) => {
             },
         });
     const userprofile = response.data;
+    // console.log(userprofile.name.toString().replace(" ", "").toLowerCase())
     // Register in our database if user not in database yet and Sign JWT and return
+    const user = await UserModel.findOne({ email: userprofile.email })
+    if (!user) {
+        const newUser = new UserModel({
+            username: userprofile.name.toString().replace(" ", "").toLowerCase() + Date.now(),
+            firstname: userprofile.name.toString().replace(" ", "").toLowerCase(),
+            lastname: Date.now(),
+            email: userprofile.email,
+            type: "SSO"
+        })
+        newUser.save()
+        const token = signJWT(newUser._id, newUser.email, newUser.username)
+        return res.json({ token })
+    }
+    const token = signJWT(user._id, user.email, user.username)
+    return res.json({ token })
     // If already registered sign JWT token and return
-    return res.json(userprofile)
 })
 
 const showGoogleOAuth = (req, res) => {
