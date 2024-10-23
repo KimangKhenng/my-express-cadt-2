@@ -2,6 +2,7 @@ const asyncHandler = require('express-async-handler')
 const bcrypt = require('bcrypt')
 const UserModel = require('../models/user')
 const jwt = require('jsonwebtoken')
+const axios = require('axios')
 
 const signUp = asyncHandler(async (req, res) => {
     const { firstname, lastname, email, password, confirmPassword } = req.body
@@ -41,9 +42,27 @@ const login = asyncHandler(async (req, res) => {
 })
 
 const handleGoogle = asyncHandler(async (req, res) => {
-    const query = req.query
-    console.log(query)
-    return res.json(query)
+    // Get one time code from OAuth Server
+    const { code } = req.query
+    // Exchange code with Goolge API server
+    const { data } = await axios.post('https://oauth2.googleapis.com/token', {
+        code,
+        client_id: process.env.GOOGLE_CLIENT_ID,
+        client_secret: process.env.GOOGLE_CLIENT_SECRET,
+        redirect_uri: process.env.GOOGLE_REDIRECT_URL,
+        grant_type: 'authorization_code',
+    })
+    // User Aceess token (JWT) from Goolge API to request user information
+    const { access_token } = data;
+    const response = await axios.get(`https://www.googleapis.com/oauth2/v1/userinfo`,
+        {
+            headers: {
+                Authorization: `Bearer ${access_token}`,
+            },
+        });
+    const userprofile = response.data;
+    // Register in our data
+    return res.json(userprofile)
 })
 
 const showGoogleOAuth = (req, res) => {
