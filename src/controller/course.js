@@ -41,6 +41,7 @@ const getCourses = asyncHandler(async (req, res) => {
     // const course = JSON.parse(result)
     // // console.log(result)
     // return res.json(course)
+    console.log("Hello")
     const courses = await CourseModel.find()
     return res.json(courses)
 })
