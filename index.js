@@ -29,14 +29,14 @@ app.use(bodyParser.json())
 
 // Router
 app.use('/auth', authRouter)
-app.use('/files', fileRouter)
+app.use('/files', passport.authenticate('jwt', { session: false }), fileRouter)
 
 app.use(cacheMiddleware)
 app.use(cacheInterceptor(30 * 60))
 app.use(invalidateInterceptor)
 app.use('/courses', passport.authenticate('jwt', { session: false }), courseRouter)
-app.use('/books', verifyJWT, bookRouter)
-app.use('/users', verifyJWT, userRouter)
+app.use('/books', passport.authenticate('jwt', { session: false }), bookRouter)
+app.use('/users', passport.authenticate('jwt', { session: false }), userRouter)
 
 app.use(handleError)
 

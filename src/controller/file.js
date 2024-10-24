@@ -2,7 +2,7 @@ const asyncHandler = require("express-async-handler");
 const FileModel = require("../models/file");
 const path = require('path')
 const { S3Client, DeleteObjectCommand } = require('@aws-sdk/client-s3')
-
+const fs = require('fs')
 
 const s3Clinet = new S3Client({
     region: process.env.AWS_REGION,
@@ -63,4 +63,12 @@ const deleteFileS3 = asyncHandler(async (req, res) => {
     const result = await FileModel.deleteOne({ _id: id })
     return res.json({ response, result })
 })
-module.exports = { handleUpload, getFile, handleUploads, handleS3Upload, deleteFileS3, getAllFiles }
+
+const deleteFile = asyncHandler(async (req, res) => {
+    const id = req.params.id
+    const file = await FileModel.findById(id)
+    fs.unlinkSync(path.join(__dirname, "./../../" + file.path))
+    const result = await FileModel.deleteOne({ _id: id })
+    return res.json(result)
+})
+module.exports = { handleUpload, getFile, handleUploads, handleS3Upload, deleteFileS3, getAllFiles, deleteFile }
