@@ -8,9 +8,17 @@ const handleUpload = asyncHandler(async (req, res) => {
     return res.json(file)
 })
 
+const handleUploads = asyncHandler(async (req, res) => {
+    // const file = new FileModel(req.file)
+    // file.save()
+    const files = req.files
+    return res.json(files)
+})
+
+
 const getFile = asyncHandler(async (req, res) => {
     const id = req.params.id
     const file = await FileModel.findById(id)
     return res.sendFile(path.join(__dirname, "./../../" + file.path))
 })
-module.exports = { handleUpload, getFile }
+module.exports = { handleUpload, getFile, handleUploads }

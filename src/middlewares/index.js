@@ -104,19 +104,23 @@ const cacheMiddleware = asyncHandler(async (req, res, next) => {
 const storage = multer.diskStorage({
     destination: './uploads',
     filename: function (req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
+        cb(null, file.originalname + '-' + Date.now() + path.extname(file.originalname))
     },
 })
 
 const singleUpload = multer({
     storage: storage,
-    filename: function (req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
-    },
     fileFilter: function (req, file, cb) {
         checkFileType(file, cb)
     },
 }).single('file')
+
+const multipleUploads = multer({
+    storage: storage,
+    fileFilter: function (req, file, cb) {
+        checkFileType(file, cb)
+    },
+}).array('files')
 
 // Check file type
 function checkFileType(file, cb) {
@@ -143,5 +147,6 @@ module.exports = {
     cacheInterceptor,
     cacheMiddleware,
     invalidateInterceptor,
-    singleUpload
+    singleUpload,
+    multipleUploads
 }

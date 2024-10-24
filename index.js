@@ -38,8 +38,6 @@ app.use('/courses', passport.authenticate('jwt', { session: false }), courseRout
 app.use('/books', verifyJWT, bookRouter)
 app.use('/users', verifyJWT, userRouter)
 
-
-
 app.use(handleError)
 
 app.listen(process.env.PORT, function () {

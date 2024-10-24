@@ -7,6 +7,7 @@ const bookSchema = new mongoose.Schema({
     page: { type: Number, required: true },
     description: { type: String, required: true },
     createdDate: { type: Date, required: true, default: new Date() },
+    covers: [{ type: mongoose.Types.ObjectId, ref: 'Files' }]
 })
 
 const BookModel = mongoose.model('Books', bookSchema)
