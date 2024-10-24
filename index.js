@@ -13,6 +13,7 @@ const courseRouter = require('./src/routes/course.js')
 const authRouter = require('./src/routes/auth.js');
 const jwtStrategy = require('./src/common/strategy/jwt.js');
 const redisClient = require('./src/redis/index.js');
+const fileRouter = require('./src/routes/file.js');
 const app = express()
 
 dbConnect().catch((err) => {
@@ -36,6 +37,7 @@ app.use(invalidateInterceptor)
 app.use('/courses', passport.authenticate('jwt', { session: false }), courseRouter)
 app.use('/books', verifyJWT, bookRouter)
 app.use('/users', verifyJWT, userRouter)
+app.use('/files', fileRouter)
 
 
 app.use(handleError)

@@ -10,6 +10,7 @@ services:
       - ./src:/app/src
       - ./index.js:/app/index.js
       - .env:/app/.env
+      - ./uploads:/app/uploads
   mongodb:
     build:
       context: .

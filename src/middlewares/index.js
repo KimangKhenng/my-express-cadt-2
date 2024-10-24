@@ -5,6 +5,9 @@ const { validationResult } = require('express-validator')
 
 const { responseHandler } = require('express-intercept');
 const redisClient = require('../redis');
+// File Upload
+const multer = require('multer');
+const path = require('path')
 
 const verifyJWT = asyncHandler(async (req, res, next) => {
     const token = req.headers.authorization
@@ -80,8 +83,11 @@ const invalidateInterceptor = responseHandler().for(req => {
     const { baseUrl } = req
     console.log(baseUrl)
     const keys = await redisClient.keys(`${baseUrl}*`)
-    console.log(keys)
-    redisClient.del(keys[0])
+    // console.log(keys)
+    for (let i = 0; i < keys.length; i++) {
+        redisClient.del(keys[i])
+    }
+
 })
 
 const cacheMiddleware = asyncHandler(async (req, res, next) => {
@@ -95,5 +101,28 @@ const cacheMiddleware = asyncHandler(async (req, res, next) => {
     next()
 })
 
+const storage = multer.diskStorage({
+    destination: './uploads',
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
+    },
+})
 
-module.exports = { handleError, logger, verifyJWT, handleValidation, cacheInterceptor, cacheMiddleware, invalidateInterceptor }
+const singleUpload = multer({
+    storage: storage,
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
+    },
+}).single('file')
+
+
+module.exports = {
+    handleError,
+    logger,
+    verifyJWT,
+    handleValidation,
+    cacheInterceptor,
+    cacheMiddleware,
+    invalidateInterceptor,
+    singleUpload
+}
