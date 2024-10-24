@@ -29,7 +29,7 @@ app.use(bodyParser.json())
 
 // Router
 app.use('/auth', authRouter)
-
+app.use('/files', fileRouter)
 
 app.use(cacheMiddleware)
 app.use(cacheInterceptor(30 * 60))
@@ -37,7 +37,7 @@ app.use(invalidateInterceptor)
 app.use('/courses', passport.authenticate('jwt', { session: false }), courseRouter)
 app.use('/books', verifyJWT, bookRouter)
 app.use('/users', verifyJWT, userRouter)
-app.use('/files', fileRouter)
+
 
 
 app.use(handleError)
