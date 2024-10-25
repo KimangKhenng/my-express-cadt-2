@@ -97,11 +97,11 @@
           //   return;
           // }
 
-          this.socket = io('http://localhost:3000', {
+          this.socket = io('http://0.0.0.0:4000', {
             // auth: {
             //   token: `Bearer ${token}`
             // },
-            // transports: ['websocket']
+            transports: ['websocket']
           })
 
           // this.socket.join('chat')
