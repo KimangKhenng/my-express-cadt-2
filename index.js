@@ -3,6 +3,13 @@ require('dotenv').config()
 const express = require('express')
 const bodyParser = require('body-parser')
 const passport = require('passport');
+const rateLimit = require('express-rate-limit')
+
+const limiter = rateLimit({
+    windowMs: 1 * 60 * 1000, // 1 minutes
+    max: 30, // Limit each IP to 100 requests per windowMs
+    message: { msg: 'Too many requests from this IP, please try again later.' }
+})
 
 const { handleError, cacheMiddleware, cacheInterceptor, invalidateInterceptor } = require('./src/middlewares/index.js')
 
@@ -23,6 +30,7 @@ redisClient.connect()
 
 passport.use(jwtStrategy)
 
+app.use(limiter)
 // app.use(bodyParser.urlencoded())
 app.use(bodyParser.json())
 // app.use(logger)
@@ -34,7 +42,6 @@ app.use('/files', passport.authenticate('jwt', { session: false }), fileRouter)
 app.use(cacheMiddleware)
 app.use(cacheInterceptor(30 * 60))
 app.use(invalidateInterceptor)
-console.log("Hello")
 // Cachable Routes
 app.use('/courses', passport.authenticate('jwt', { session: false }), courseRouter)
 app.use('/books', passport.authenticate('jwt', { session: false }), bookRouter)

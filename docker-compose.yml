@@ -9,10 +9,10 @@ services:
     environment:
       - NGINX_SERVER_NAME=localhost
       - EXPRESS_HOST_1=express-cadt-2-express-1
-      - EXPRESS_HOST_2=express-cadt-2-express-2
-      - EXPRESS_HOST_3=express-cadt-2-express-3
-      - EXPRESS_HOST_4=express-cadt-2-express-4
-      - EXPRESS_HOST_5=express-cadt-2-express-5
+      # - EXPRESS_HOST_2=express-cadt-2-express-2
+      # - EXPRESS_HOST_3=express-cadt-2-express-3
+      # - EXPRESS_HOST_4=express-cadt-2-express-4
+      # - EXPRESS_HOST_5=express-cadt-2-express-5
       - EXPRESS_PORT=4000
       - NGINX_MAX_BODY=100M
     ports:
@@ -26,7 +26,7 @@ services:
       - ./index.js:/app/index.js
       - .env:/app/.env
       - ./uploads:/app/uploads
-    scale: 5
+    scale: 1
     depends_on:
       - mongodb
       - redis
@@ -44,13 +44,5 @@ services:
     container_name: cadt-redis
     ports:
       - 6379:6379
-  redis-commander:
-    image: rediscommander/redis-commander:latest
-    environment:
-      - REDIS_HOSTS=local:cadt-redis:6379
-    ports:
-      - "8082:8081"
-    depends_on:
-      - redis
 volumes:
   mongodbdata:
