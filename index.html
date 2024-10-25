@@ -47,12 +47,12 @@
       methods: {
         async login() {
           try {
-            const response = await axios.post('/auth/login', {
+            const response = await axios.post('/v1/auth/login', {
               email: this.email,
               password: this.password
             });
             localStorage.setItem('token', response.data.token)
-            const { data } = await axios.get('/auth/me', {
+            const { data } = await axios.get('/v1/auth/me', {
               headers: {
                 authorization: `Bearer ${response.data.token}`
               }
@@ -79,7 +79,7 @@
     <div v-else>
       <div class="space-y-4 mb-6">
         <div v-for="message in messages" :key="message.id" class="border-b border-gray-200 pb-2">
-          <strong class="text-indigo-600">{{ message.username }}</strong>: {{ message.text }}
+          <strong class="text-indigo-600">{{ message.byUser.username }}</strong>: {{ message.text }}
         </div>
       </div>
       <form @submit.prevent="sendMessage" class="flex space-x-4">
@@ -97,8 +97,16 @@
           socket: null
         };
       },
-      created() {
+      async created() {
         this.connectWebSocket();
+        // Get chat history
+        try {
+          const { data } = await axios.get('/v1/chats')
+          this.messages.push(...data)
+        } catch (err) {
+          console.log(err.message)
+        }
+
       },
       methods: {
         connectWebSocket() {
@@ -124,8 +132,9 @@
             console.log("Websocket Initialized!")
           });
 
-          this.socket.on('re-message', (message) => {
-            this.messages.push(message);
+          this.socket.on('re-message', (paylaod) => {
+            // console.log(paylaod)
+            this.messages.push(paylaod);
           });
 
           this.socket.on('disconnect', () => {
@@ -134,10 +143,11 @@
         },
         // Extract user info from Token
         sendMessage() {
-          //sconst user = JSON.parse(localStorage.getItem('user'))
+          const user = JSON.parse(localStorage.getItem('user'))
           const message = {
             text: this.newMessage,
-            username: faker.person.fullName()
+            username: user.username,
+            id: user._id
           };
           this.socket.emit('send-message', message);
           this.newMessage = '';
@@ -149,8 +159,8 @@
 
 
     const routes = [
-      { path: '/', component: Chat },
-      // { path: '/chat', component: Chat }
+      { path: '/', component: Home },
+      { path: '/chat', component: Chat }
     ];
 
     const router = VueRouter.createRouter({
