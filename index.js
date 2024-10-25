@@ -8,7 +8,7 @@ const bodyParser = require('body-parser')
 const passport = require('passport');
 const rateLimit = require('express-rate-limit')
 const { RedisStore } = require('rate-limit-redis')
-
+const path = require('path')
 
 const { handleError, cacheMiddleware, cacheInterceptor, invalidateInterceptor } = require('./src/middlewares/index.js')
 
@@ -29,14 +29,20 @@ const io = new Server(server, {
     }
 })
 
-// protocol: http, express
 app.get('/', (req, res) => {
-    res.sendFile(join(__dirname, 'index.html'))
+    return res.sendFile(path.join(__dirname, 'index.html'))
 })
+// protocol: http, express
+
 
 // protocal: websocket, socket.io
 io.on('connection', (socket) => {
     console.log(`${socket.id} connected`);
+    socket.on('send-message', async (payload) => {
+        // Recieve
+        // Save chat to DB
+        io.emit('re-message', payload)
+    })
 })
 
 dbConnect().catch((err) => {
@@ -70,7 +76,7 @@ passport.use(jwtStrategy)
 app.use(bodyParser.json())
 // app.use(logger)
 
-app.use('/auth', loginLimit, authRouter)
+app.use('/auth', authRouter)
 app.use(limiter)
 app.use('/files', passport.authenticate('jwt', { session: false }), fileRouter)
 
