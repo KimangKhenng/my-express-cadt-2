@@ -23,6 +23,7 @@ const redisClient = require('./src/redis/index.js');
 const fileRouter = require('./src/routes/file.js');
 const chatRouter = require('./src/routes/chat.js');
 const ChatModel = require('./src/models/chat.js');
+const cors = require('cors')
 
 const { createAdapter } = require("@socket.io/redis-adapter")
 
@@ -32,17 +33,30 @@ const pubClient = new Redis({
 });
 const subClient = pubClient.duplicate();
 const app = express()
+app.use(cors())
 const server = createServer(app, (req, res) => {
-    // Set CORS headers
-    res.setHeader('Access-Control-Allow-Origin', '*')
-    res.setHeader('Access-Control-Request-Method', '*')
-    res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET')
-    res.setHeader('Access-Control-Allow-Headers', req.header.origin)
+    const headers = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'OPTIONS, POST, GET',
+        'Access-Control-Max-Age': 2592000, // 30 days
+        /** add other headers as per requirement */
+    }
+
     if (req.method === 'OPTIONS') {
-        res.writeHead(200)
+        res.writeHead(204, headers)
         res.end()
         return
     }
+
+    if (['GET', 'POST'].indexOf(req.method) > -1) {
+        res.writeHead(200, headers)
+        // console.log("Hello World")
+        res.end('Hello World')
+        return
+    }
+
+    res.writeHead(405, headers)
+    res.end(`${req.method} is not allowed for the request.`)
 });
 const io = new Server(server, {
     cors: {

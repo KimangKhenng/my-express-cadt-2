@@ -47,6 +47,7 @@ const login = asyncHandler(async (req, res) => {
 const handleGoogle = asyncHandler(async (req, res) => {
     // Get one time code from OAuth Server
     const { code } = req.query
+    // console.log(code)
     // Exchange code with Goolge API server
     const { data } = await axios.post('https://oauth2.googleapis.com/token', {
         code,
