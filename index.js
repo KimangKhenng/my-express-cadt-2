@@ -65,9 +65,9 @@ const io = new Server(server, {
     adapter: createAdapter(pubClient, subClient)
 })
 
-app.get('/', (req, res) => {
-    return res.sendFile(path.join(__dirname, 'index.html'))
-})
+// app.get('/', (req, res) => {
+//     return res.sendFile(path.join(__dirname, 'index.html'))
+// })
 // protocol: http, express
 
 
