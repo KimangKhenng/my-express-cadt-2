@@ -9,6 +9,7 @@ const passport = require('passport');
 const rateLimit = require('express-rate-limit')
 const { RedisStore } = require('rate-limit-redis')
 const path = require('path')
+const { Redis } = require('ioredis')
 
 const { handleError, cacheMiddleware, cacheInterceptor, invalidateInterceptor } = require('./src/middlewares/index.js')
 
@@ -23,12 +24,31 @@ const fileRouter = require('./src/routes/file.js');
 const chatRouter = require('./src/routes/chat.js');
 const ChatModel = require('./src/models/chat.js');
 
+const { createAdapter } = require("@socket.io/redis-adapter")
+
+const pubClient = new Redis({
+    port: 6379, // Redis port
+    host: process.env.CACHE_SERVER, // Redis host
+});
+const subClient = pubClient.duplicate();
 const app = express()
-const server = createServer(app);
+const server = createServer(app, (req, res) => {
+    // Set CORS headers
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Access-Control-Request-Method', '*')
+    res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET')
+    res.setHeader('Access-Control-Allow-Headers', req.header.origin)
+    if (req.method === 'OPTIONS') {
+        res.writeHead(200)
+        res.end()
+        return
+    }
+});
 const io = new Server(server, {
     cors: {
         origin: '*'
-    }
+    },
+    adapter: createAdapter(pubClient, subClient)
 })
 
 app.get('/', (req, res) => {

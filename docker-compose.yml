@@ -9,8 +9,8 @@ services:
     environment:
       - NGINX_SERVER_NAME=localhost
       - EXPRESS_HOST_1=express-cadt-2-express-1
-      # - EXPRESS_HOST_2=express-cadt-2-express-2
-      # - EXPRESS_HOST_3=express-cadt-2-express-3
+      - EXPRESS_HOST_2=express-cadt-2-express-2
+      - EXPRESS_HOST_3=express-cadt-2-express-3
       # - EXPRESS_HOST_4=express-cadt-2-express-4
       # - EXPRESS_HOST_5=express-cadt-2-express-5
       - EXPRESS_PORT=4000
@@ -27,7 +27,7 @@ services:
       - .env:/app/.env
       - ./uploads:/app/uploads
       - ./index.html:/app/index.html
-    scale: 1
+    scale: 3
     depends_on:
       - mongodb
       - redis
