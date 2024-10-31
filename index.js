@@ -119,6 +119,7 @@ app.use(bodyParser.json())
 // app.use(logger)
 
 app.use('/v1/auth', authRouter)
+app.use('/v1/chats', chatRouter)
 app.use(limiter)
 app.use('/v1/files', passport.authenticate('jwt', { session: false }), fileRouter)
 
@@ -130,7 +131,6 @@ app.use(invalidateInterceptor)
 app.use('/v1/courses', passport.authenticate('jwt', { session: false }), courseRouter)
 app.use('/v1/books', passport.authenticate('jwt', { session: false }), bookRouter)
 app.use('/v1/users', passport.authenticate('jwt', { session: false }), userRouter)
-app.use('/v1/chats', chatRouter)
 app.use(handleError)
 
 server.listen(process.env.PORT, function () {
