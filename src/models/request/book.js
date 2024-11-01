@@ -7,7 +7,7 @@ module.exports = {
             title: Joi.string().required(),
             genre: Joi.string().required(),
             description: Joi.string().required(),
-            author: Joi.number().required(),
+            author: Joi.string().required(),
             page: Joi.number().required(),
         },
         model: "createBook", // Name of the model

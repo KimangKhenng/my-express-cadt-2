@@ -11,7 +11,7 @@ const { RedisStore } = require('rate-limit-redis')
 const path = require('path')
 const { Redis } = require('ioredis')
 
-const { handleError, cacheMiddleware, cacheInterceptor, invalidateInterceptor } = require('./src/middlewares/index.js')
+const { handleError, cacheMiddleware, cacheInterceptor, invalidateInterceptor, verifyJWT } = require('./src/middlewares/index.js')
 
 const dbConnect = require('./src/db/db.js')
 const bookRouter = require('./src/routes/book.js')

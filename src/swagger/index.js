@@ -13,7 +13,8 @@ const options = {
             description: 'Example value:- Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjU5MmQwMGJhNTJjYjJjM',
             type: 'apiKey',
             name: 'Authorization',
-            in: 'header'
+            in: 'header',
+            bearerFormat: 'JWT'
         }
     },
     security: [{ Bearer: [] }],
