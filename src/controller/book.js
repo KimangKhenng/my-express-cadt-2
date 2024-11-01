@@ -1,8 +1,7 @@
 
 const asyncHandler = require('express-async-handler')
 const BookModel = require('../models/book.js')
-const redisClient = require('../redis/index.js')
-
+const { PaginationParameters } = require('mongoose-paginate-v2');
 /**
  * Controller is a specific function to handle specific tasks
  */
@@ -24,17 +23,25 @@ const getBookById = asyncHandler(async (req, res) => {
 })
 
 const getBooks = asyncHandler(async (req, res) => {
-    const { limit, page } = req.query
-    const options = {
-        limit: limit ? limit : -1,
-        page: page ? page : -1,
-        pagination: limit ? true : false
-    }
-    console.log(options)
-    const { join } = req.query
+    // const { limit, page } = req.query
+    // const options = {
+    //     limit: limit ? limit : -1,
+    //     page: page ? page : -1,
+    //     pagination: limit ? true : false,
+    //     // Populate and select only certain fields
+    //     populate: {
+    //         path: 'author',
+    //         select: ['email', 'username']
+    //     }
+    //     // All
+    //     // populate: 'author'
+    // }
+    // console.log(options)
     // Get all courses 
     // const books = await BookModel.find().populate(join)
-    const books = await BookModel.paginate({}, options)
+    const options = new PaginationParameters(req).get()
+    // console.log(...options)
+    const books = await BookModel.paginate(...options)
 
     return res.json(books)
 })

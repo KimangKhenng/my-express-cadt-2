@@ -124,13 +124,14 @@ app.use(limiter)
 app.use('/v1/files', passport.authenticate('jwt', { session: false }), fileRouter)
 
 //Redis Cache
+app.use(passport.authenticate('jwt', { session: false }))
 app.use(cacheMiddleware)
-app.use(cacheInterceptor(30 * 60))
+app.use(cacheInterceptor(3 * 60))
 app.use(invalidateInterceptor)
 // Cachable Routes
-app.use('/v1/courses', passport.authenticate('jwt', { session: false }), courseRouter)
-app.use('/v1/books', passport.authenticate('jwt', { session: false }), bookRouter)
-app.use('/v1/users', passport.authenticate('jwt', { session: false }), userRouter)
+app.use('/v1/courses', courseRouter)
+app.use('/v1/books', bookRouter)
+app.use('/v1/users', userRouter)
 app.use(handleError)
 
 server.listen(process.env.PORT, function () {
