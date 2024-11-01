@@ -5,36 +5,6 @@
 
 module.exports = {
     createBook: {
-        200: {
-            docs: [],
-            totalDocs: {
-                type: Number
-            },
-            limit: {
-                type: Number
-            },
-            totalPages: {
-                type: Number
-            },
-            page: {
-                type: Number
-            },
-            pagingCounter: {
-                type: Number
-            },
-            hasPrevPage: {
-                type: Boolean
-            },
-            hasNextPage: {
-                type: Boolean
-            },
-            prevPage: {
-                type: String
-            },
-            nextPage: {
-                type: String
-            }
-        },
         201: {
             message: {
                 type: 'Successfully created book'
@@ -48,33 +18,38 @@ module.exports = {
     },
     getAllBooks: {
         200: {
-            docs: [],
+            docs: {
+                type: 'array',
+                items: {
+                    type: 'object'
+                }
+            },
             totalDocs: {
-                type: Number
+                type: 'number'
             },
             limit: {
-                type: Number
+                type: 'number'
             },
             totalPages: {
-                type: Number
+                type: 'number'
             },
             page: {
-                type: Number
+                type: 'number'
             },
             pagingCounter: {
-                type: Number
+                type: 'number'
             },
             hasPrevPage: {
-                type: Boolean
+                type: 'boolean'
             },
             hasNextPage: {
-                type: Boolean
+                type: 'boolean'
             },
             prevPage: {
-                type: String
+                type: 'string'
             },
             nextPage: {
-                type: String
+                type: 'string'
             }
         }
     }
