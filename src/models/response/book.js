@@ -5,6 +5,36 @@
 
 module.exports = {
     createBook: {
+        200: {
+            docs: [],
+            totalDocs: {
+                type: Number
+            },
+            limit: {
+                type: Number
+            },
+            totalPages: {
+                type: Number
+            },
+            page: {
+                type: Number
+            },
+            pagingCounter: {
+                type: Number
+            },
+            hasPrevPage: {
+                type: Boolean
+            },
+            hasNextPage: {
+                type: Boolean
+            },
+            prevPage: {
+                type: String
+            },
+            nextPage: {
+                type: String
+            }
+        },
         201: {
             message: {
                 type: 'Successfully created book'
@@ -13,6 +43,38 @@ module.exports = {
         500: {
             internal: {
                 type: 'Internal server error!'
+            }
+        }
+    },
+    getAllBooks: {
+        200: {
+            docs: [],
+            totalDocs: {
+                type: Number
+            },
+            limit: {
+                type: Number
+            },
+            totalPages: {
+                type: Number
+            },
+            page: {
+                type: Number
+            },
+            pagingCounter: {
+                type: Number
+            },
+            hasPrevPage: {
+                type: Boolean
+            },
+            hasNextPage: {
+                type: Boolean
+            },
+            prevPage: {
+                type: String
+            },
+            nextPage: {
+                type: String
             }
         }
     }

@@ -148,6 +148,7 @@ app.use('/v1/users',
     cacheInterceptor(3 * 60),
     invalidateInterceptor,
     userRouter)
+
 app.use(handleError)
 
 setupSwagger(app)
