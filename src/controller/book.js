@@ -23,26 +23,8 @@ const getBookById = asyncHandler(async (req, res) => {
 })
 
 const getBooks = asyncHandler(async (req, res) => {
-    // const { limit, page } = req.query
-    // const options = {
-    //     limit: limit ? limit : -1,
-    //     page: page ? page : -1,
-    //     pagination: limit ? true : false,
-    //     // Populate and select only certain fields
-    //     populate: {
-    //         path: 'author',
-    //         select: ['email', 'username']
-    //     }
-    //     // All
-    //     // populate: 'author'
-    // }
-    // console.log(options)
-    // Get all courses 
-    // const books = await BookModel.find().populate(join)
     const options = new PaginationParameters(req).get()
-    // console.log(...options)
     const books = await BookModel.paginate(...options)
-
     return res.json(books)
 })
 

@@ -23,13 +23,8 @@ const getCourseById = asyncHandler(async (req, res) => {
 })
 
 const getCourses = asyncHandler(async (req, res) => {
-    const courses = await CourseModel.find({
-        // Price greater than 100, little than 300
-        price: {
-            $gte: 100.0,
-            $lte: 300.0
-        }
-    })
+    const options = new PaginationParameters(req).get()
+    const courses = await CourseModel.paginate(...options)
     return res.json(courses)
 })
 

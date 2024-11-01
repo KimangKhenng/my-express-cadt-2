@@ -24,9 +24,9 @@ const getUserById = asyncHandler(async (req, res) => {
 })
 
 const getUsers = asyncHandler(async (req, res) => {
-    // Get all courses 
-    const courses = await UserModel.find()
-    return res.json(courses)
+    const options = new PaginationParameters(req).get()
+    const users = await UserModel.paginate(...options)
+    return res.json(users)
 })
 
 const deleteUserById = asyncHandler(async (req, res) => {
