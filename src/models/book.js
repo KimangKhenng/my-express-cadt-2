@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate-v2')
 
 const bookSchema = new mongoose.Schema({
     title: { type: String, required: true },
@@ -9,6 +10,7 @@ const bookSchema = new mongoose.Schema({
     createdDate: { type: Date, required: true, default: new Date() },
     covers: [{ type: mongoose.Types.ObjectId, ref: 'Files' }]
 })
+bookSchema.plugin(mongoosePaginate)
 
 const BookModel = mongoose.model('Books', bookSchema)
 
