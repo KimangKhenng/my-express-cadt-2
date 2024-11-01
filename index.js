@@ -25,7 +25,8 @@ const chatRouter = require('./src/routes/chat.js');
 const ChatModel = require('./src/models/chat.js');
 const cors = require('cors')
 
-const { createAdapter } = require("@socket.io/redis-adapter")
+const { createAdapter } = require("@socket.io/redis-adapter");
+const setupSwagger = require('./src/swagger/index.js');
 
 const pubClient = new Redis({
     port: 6379, // Redis port
@@ -124,15 +125,32 @@ app.use(limiter)
 app.use('/v1/files', passport.authenticate('jwt', { session: false }), fileRouter)
 
 //Redis Cache
-app.use(passport.authenticate('jwt', { session: false }))
-app.use(cacheMiddleware)
-app.use(cacheInterceptor(3 * 60))
-app.use(invalidateInterceptor)
+// app.use(passport.authenticate('jwt', { session: false }))
+// app.use(cacheMiddleware)
+// app.use(cacheInterceptor(3 * 60))
+// app.use(invalidateInterceptor)
 // Cachable Routes
-app.use('/v1/courses', courseRouter)
-app.use('/v1/books', bookRouter)
-app.use('/v1/users', userRouter)
+app.use('/v1/courses',
+    passport.authenticate('jwt', { session: false }),
+    cacheMiddleware,
+    cacheInterceptor(3 * 60),
+    invalidateInterceptor,
+    courseRouter)
+app.use('/v1/books',
+    passport.authenticate('jwt', { session: false }),
+    cacheMiddleware,
+    cacheInterceptor(3 * 60),
+    invalidateInterceptor,
+    bookRouter)
+app.use('/v1/users',
+    passport.authenticate('jwt', { session: false }),
+    cacheMiddleware,
+    cacheInterceptor(3 * 60),
+    invalidateInterceptor,
+    userRouter)
 app.use(handleError)
+
+setupSwagger(app)
 
 server.listen(process.env.PORT, function () {
     console.log(`Server is running on port ${process.env.PORT}`)
