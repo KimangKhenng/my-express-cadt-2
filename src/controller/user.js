@@ -2,6 +2,7 @@
 const asyncHandler = require('express-async-handler')
 const UserModel = require('../models/user.js')
 const redisClient = require('../redis/index.js')
+const { PaginationParameters } = require('mongoose-paginate-v2');
 
 /**
  * Controller is a specific function to handle specific tasks

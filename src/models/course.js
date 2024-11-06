@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate-v2')
 
 const courseSchema = new mongoose.Schema({
     price: { type: Number, required: true },
@@ -7,6 +8,8 @@ const courseSchema = new mongoose.Schema({
     author: { type: String, required: true },
     createdDate: { type: Date, required: true, default: new Date() },
 })
+
+courseSchema.plugin(mongoosePaginate)
 
 const CourseModel = mongoose.model('Courses', courseSchema)
 

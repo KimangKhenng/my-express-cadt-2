@@ -119,6 +119,9 @@ passport.use(jwtStrategy)
 app.use(bodyParser.json())
 // app.use(logger)
 
+app.use('/health-check', (req, res) => {
+    return res.status(200).json({ msg: "Up" })
+})
 app.use('/v1/auth', authRouter)
 app.use('/v1/chats', chatRouter)
 app.use(limiter)

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate-v2')
 
 const fileSchema = new mongoose.Schema({
     filename: { type: String },
@@ -11,6 +12,7 @@ const fileSchema = new mongoose.Schema({
     createdDate: { type: Date, required: true, default: new Date() },
     etag: { type: String }
 })
+fileSchema.plugin(mongoosePaginate)
 
 const FileModel = mongoose.model('Files', fileSchema)
 
