@@ -26,3 +26,5 @@ tests:
           auth:
             bearer:
               token: ${{captures.accessToken}}
+          check:
+            status: /^20/

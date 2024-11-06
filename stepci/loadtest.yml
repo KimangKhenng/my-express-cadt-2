@@ -1,0 +1,18 @@
+version: "1.1"
+name: Load Test
+env:
+  host: localhost:4000
+config:
+  loadTest:
+    phases:
+      - duration: 10
+        arrivalRate: 2
+      - duration: 60
+        arrivalRate: 10
+tests:
+  example:
+    steps:
+      - name: GET request
+        http:
+          url: http://${{env.host}}/health-check
+          method: GET
