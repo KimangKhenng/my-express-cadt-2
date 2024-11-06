@@ -1,0 +1,28 @@
+version: "1.1"
+name: Get all books
+env:
+  host: localhost:4000
+  email: kiman@gmail.com
+  password: "12345678"
+tests:
+  books:
+    steps:
+      - name: Login
+        http:
+          url: http://${{env.host}}/v1/auth/login
+          method: POST
+          check:
+            status: /^20/
+          json:
+            email: ${{env.email}}
+            password: ${{env.password}}
+          captures:
+            accessToken:
+              jsonpath: $.accessToken
+      - name: Get all books
+        http:
+          url: http://${{env.host}}/v1/books
+          method: GET
+          auth:
+            bearer:
+              token: ${{captures.accessToken}}
