@@ -23,9 +23,17 @@ const getBookById = asyncHandler(async (req, res) => {
 })
 
 const getBooks = asyncHandler(async (req, res) => {
+
+    // Intentionally make response 20s long
+    // setTimeout(async () => {
+    //     const options = new PaginationParameters(req).get()
+    //     const books = await BookModel.paginate(...options)
+    //     return res.json(books)
+    // }, 20 * 1000)
     const options = new PaginationParameters(req).get()
     const books = await BookModel.paginate(...options)
     return res.json(books)
+
 })
 
 const deleteBookbyId = asyncHandler(async (req, res) => {

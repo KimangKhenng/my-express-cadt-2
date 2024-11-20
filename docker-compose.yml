@@ -8,11 +8,9 @@ services:
       - express
     environment:
       - NGINX_SERVER_NAME=localhost
-      - EXPRESS_HOST_1=express-cadt-2-express-1
-      - EXPRESS_HOST_2=express-cadt-2-express-2
-      - EXPRESS_HOST_3=express-cadt-2-express-3
-      # - EXPRESS_HOST_4=express-cadt-2-express-4
-      # - EXPRESS_HOST_5=express-cadt-2-express-5
+      - EXPRESS_HOST_1=${EXPRESS_CONTAINER}-1
+      - EXPRESS_HOST_2=${EXPRESS_CONTAINER}-2
+      - EXPRESS_HOST_3=${EXPRESS_CONTAINER}-3
       - EXPRESS_PORT=4000
       - NGINX_MAX_BODY=100M
     ports:
