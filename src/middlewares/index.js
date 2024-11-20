@@ -7,7 +7,8 @@ const { responseHandler } = require('express-intercept');
 const redisClient = require('../redis');
 // File Upload
 const multer = require('multer');
-const path = require('path')
+const path = require('path');
+const { roles } = require('../models/permission');
 
 const verifyJWT = asyncHandler(async (req, res, next) => {
     const token = req.headers.authorization
@@ -155,6 +156,20 @@ function checkFileType(file, cb) {
     }
 }
 
+const checkRole = (action, role) => {
+    console.log(roles[role].permissions)
+    return roles[role].permissions.includes(action)
+}
+
+const permission = (action) => asyncHandler((req, res, next) => {
+    const user = req.user
+    if (!checkRole(action, user.permission)) {
+        return res.json({ msg: "Unauthorized" })
+    }
+    next()
+
+})
+
 
 module.exports = {
     handleError,
@@ -166,5 +181,6 @@ module.exports = {
     cacheMiddleware,
     invalidateInterceptor,
     singleUpload,
-    multipleUploads
+    multipleUploads,
+    permission
 }

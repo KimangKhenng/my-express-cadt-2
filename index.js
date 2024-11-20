@@ -144,7 +144,7 @@ app.use('/v1/courses',
     courseRouter)
 app.use('/v1/books',
     limiter(1 * 1000 * 60, 60),
-    // passport.authenticate('jwt', { session: false }),
+    passport.authenticate('jwt', { session: false }),
     cacheMiddleware,
     cacheInterceptor(3 * 60),
     invalidateInterceptor,
