@@ -1,27 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vue 3 Chat Room</title>
+    <script src="https://unpkg.com/vue@3"></script>
+    <script src="https://unpkg.com/vue-router@4.0.15/dist/vue-router.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script
+      src="https://cdn.socket.io/4.7.5/socket.io.min.js"
+      integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vue 3 Chat Room</title>
-  <script src="https://unpkg.com/vue@3"></script>
-  <script src="https://unpkg.com/vue-router@4.0.15/dist/vue-router.global.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"
-    integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO"
-    crossorigin="anonymous"></script>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
-
-<body>
-  <div id="app" class="min-h-screen flex items-center justify-center">
-    <router-view></router-view>
-  </div>
-  <script type="module">
-    import { faker } from 'https://esm.sh/@faker-js/faker';
-    const Home = {
-      template: `
+  <body>
+    <div id="app" class="min-h-screen flex items-center justify-center">
+      <router-view></router-view>
+    </div>
+    <script type="module">
+      import { faker } from 'https://esm.sh/@faker-js/faker';
+      const Home = {
+        template: `
   <div class="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
     <h2 class="text-2xl font-bold mb-6">Login</h2>
     <form @submit.prevent="login" class="space-y-4">
@@ -38,41 +42,47 @@
     </form>
   </div>
   `,
-      data() {
-        return {
-          username: '',
-          password: ''
-        };
-      },
-      methods: {
-        async login() {
-          try {
-            const response = await axios.post('http://172.23.1.218:4000/v1/auth/login', {
-              email: this.email,
-              password: this.password
-            });
-            localStorage.setItem('token', response.data.token)
-            const { data } = await axios.get('http://172.23.1.218:4000/v1/auth/me', {
-              headers: {
-                authorization: `Bearer ${response.data.token}`
-              }
-            });
-            // console.log(data)
-            localStorage.setItem('user', JSON.stringify(data));
-            // const user = await axios.get(`/users/${}`)
-            this.$router.push('/chat');
-          } catch (error) {
-            console.log(error)
-            alert('Login failed');
-          }
+        data() {
+          return {
+            username: '',
+            password: '',
+          };
         },
-        googleLogin() {
-          window.open('https://google.com', "_self")
-        }
-      }
-    };
-    const Chat = {
-      template: `
+        methods: {
+          async login() {
+            try {
+              const response = await axios.post(
+                'http://172.23.1.218:4000/v1/auth/login',
+                {
+                  email: this.email,
+                  password: this.password,
+                },
+              );
+              localStorage.setItem('token', response.data.token);
+              const { data } = await axios.get(
+                'http://172.23.1.218:4000/v1/auth/me',
+                {
+                  headers: {
+                    authorization: `Bearer ${response.data.token}`,
+                  },
+                },
+              );
+              // console.log(data)
+              localStorage.setItem('user', JSON.stringify(data));
+              // const user = await axios.get(`/users/${}`)
+              this.$router.push('/chat');
+            } catch (error) {
+              console.log(error);
+              alert('Login failed');
+            }
+          },
+          googleLogin() {
+            window.open('https://google.com', '_self');
+          },
+        },
+      };
+      const Chat = {
+        template: `
   <div class="max-w-2xl w-full bg-white p-8 rounded-lg shadow-md">
     <h2 class="text-2xl font-bold mb-6">Chat Room</h2>
     <div v-if="!connected" class="text-center text-gray-500">Connecting...</div>
@@ -89,88 +99,87 @@
     </div>
   </div>
   `,
-      data() {
-        return {
-          messages: [],
-          newMessage: '',
-          connected: false,
-          socket: null
-        };
-      },
-      async created() {
-        this.connectWebSocket();
-        // Get chat history
-        try {
-          const { data } = await axios.get('http://172.23.1.218:4000/v1/chats')
-          this.messages.push(...data)
-        } catch (err) {
-          console.log(err.message)
-        }
-
-      },
-      methods: {
-        connectWebSocket() {
-          console.log("Trying to connect!")
-          // const token = localStorage.getItem('token');
-          // if (!token) {
-          //   this.$router.push('/');
-          //   return;
-          // }
-          // Get all chat histories from Backend
-
-          this.socket = io('http://172.23.1.218:4000', {
-            // auth: {
-            //   token: `Bearer ${token}`
-            // },
-            transports: ['websocket']
-          })
-
-          // this.socket.join('chat')
-
-          this.socket.on('connect', () => {
-            this.connected = true;
-            console.log("Websocket Initialized!")
-          });
-
-          this.socket.on('re-message', (paylaod) => {
-            // console.log(paylaod)
-            this.messages.push(paylaod);
-          });
-
-          this.socket.on('disconnect', () => {
-            this.connected = false;
-          });
-        },
-        // Extract user info from Token
-        sendMessage() {
-          const user = JSON.parse(localStorage.getItem('user'))
-          const message = {
-            text: this.newMessage,
-            username: user.username,
-            id: user._id
+        data() {
+          return {
+            messages: [],
+            newMessage: '',
+            connected: false,
+            socket: null,
           };
-          this.socket.emit('send-message', message);
-          this.newMessage = '';
-        }
-      }
-    };
+        },
+        async created() {
+          this.connectWebSocket();
+          // Get chat history
+          try {
+            const { data } = await axios.get(
+              'http://172.23.1.218:4000/v1/chats',
+            );
+            this.messages.push(...data);
+          } catch (err) {
+            console.log(err.message);
+          }
+        },
+        methods: {
+          connectWebSocket() {
+            console.log('Trying to connect!');
+            // const token = localStorage.getItem('token');
+            // if (!token) {
+            //   this.$router.push('/');
+            //   return;
+            // }
+            // Get all chat histories from Backend
 
-    const app = Vue.createApp({});
+            this.socket = io('http://172.23.1.218:4000', {
+              // auth: {
+              //   token: `Bearer ${token}`
+              // },
+              transports: ['websocket'],
+            });
 
+            // this.socket.join('chat')
 
-    const routes = [
-      { path: '/', component: Home },
-      { path: '/chat', component: Chat }
-    ];
+            this.socket.on('connect', () => {
+              this.connected = true;
+              console.log('Websocket Initialized!');
+            });
 
-    const router = VueRouter.createRouter({
-      history: VueRouter.createWebHistory(),
-      routes
-    });
+            this.socket.on('re-message', (paylaod) => {
+              // console.log(paylaod)
+              this.messages.push(paylaod);
+            });
 
-    app.use(router);
-    app.mount('#app');
-  </script>
-</body>
+            this.socket.on('disconnect', () => {
+              this.connected = false;
+            });
+          },
+          // Extract user info from Token
+          sendMessage() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const message = {
+              text: this.newMessage,
+              username: user.username,
+              id: user._id,
+            };
+            this.socket.emit('send-message', message);
+            this.newMessage = '';
+          },
+        },
+      };
 
+      const app = Vue.createApp({});
+
+      const routes = [
+        { path: '/', component: Home },
+        { path: '/chat', component: Chat },
+      ];
+
+      const router = VueRouter.createRouter({
+        history: VueRouter.createWebHistory(),
+        routes,
+      });
+
+      app.use(router);
+      app.mount('#app');
+    </script>
+  </body>
 </html>

@@ -1,9 +1,9 @@
-version: "1.1"
+version: '1.1'
 name: Get all books
 env:
   host: localhost:4000
   email: kiman@gmail.com
-  password: "12345678"
+  password: '12345678'
 tests:
   books:
     steps:

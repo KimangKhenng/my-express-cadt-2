@@ -1,29 +1,30 @@
-const swagger = require("swagger-generator-express")
+const swagger = require('swagger-generator-express');
 
 // Define your router here
 
 const options = {
-    title: "CADT Express API",
-    version: "1.0.0",
-    license: {
-        name: "Apache 2.0",
-        url: "https://www.apache.org/licenses/LICENSE-2.0.html"
+  title: 'CADT Express API',
+  version: '1.0.0',
+  license: {
+    name: 'Apache 2.0',
+    url: 'https://www.apache.org/licenses/LICENSE-2.0.html',
+  },
+  host: `${process.env.API_HOST}`,
+  basePath: '/',
+  schemes: ['http', 'https'],
+  securityDefinitions: {
+    Bearer: {
+      description:
+        'Example value:- Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjU5MmQwMGJhNTJjYjJjM',
+      type: 'apiKey',
+      name: 'Authorization',
+      in: 'header',
+      bearerFormat: 'JWT',
     },
-    host: `${process.env.API_HOST}`,
-    basePath: "/",
-    schemes: ["http", "https"],
-    securityDefinitions: {
-        Bearer: {
-            description: 'Example value:- Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjU5MmQwMGJhNTJjYjJjM',
-            type: 'apiKey',
-            name: 'Authorization',
-            in: 'header',
-            bearerFormat: 'JWT'
-        }
-    },
-    security: [{ Bearer: [] }],
-    defaultSecurity: 'Bearer'
-}
+  },
+  security: [{ Bearer: [] }],
+  defaultSecurity: 'Bearer',
+};
 
 /**
  * serveSwagger must be called after defining your router.
@@ -35,9 +36,12 @@ const options = {
  * @param path.responseModelPath Optional parameter which is path to folder in which responseModel defined, if not given response objects will not display on swagger documentation.
  */
 
-
 function setupSwagger(app) {
-    swagger.serveSwagger(app, "/docs", options, { routePath: './src/routes/', requestModelPath: './src/models/request', responseModelPath: './src/models/response' })
+  swagger.serveSwagger(app, '/docs', options, {
+    routePath: './src/routes/',
+    requestModelPath: './src/models/request',
+    responseModelPath: './src/models/response',
+  });
 }
 
-module.exports = setupSwagger
+module.exports = setupSwagger;
