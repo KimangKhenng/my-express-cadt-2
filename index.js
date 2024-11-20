@@ -27,6 +27,7 @@ const ChatModel = require('./src/models/chat.js');
 
 const { createAdapter } = require("@socket.io/redis-adapter");
 const setupSwagger = require('./src/swagger/index.js');
+const path = require('node:path');
 
 const pubClient = new Redis({
     port: 6379, // Redis port
@@ -67,10 +68,9 @@ const io = new Server(server, {
     },
     adapter: createAdapter(pubClient, subClient)
 })
+app.use(express.static(path.join(__dirname, 'frontend/dist')))
+// Serve frontend from backend (index.html, css, javascript)
 
-// app.get('/', (req, res) => {
-//     return res.sendFile(path.join(__dirname, 'index.html'))
-// })
 // protocol: http, express
 
 
@@ -144,7 +144,7 @@ app.use('/v1/courses',
     courseRouter)
 app.use('/v1/books',
     limiter(1 * 1000 * 60, 60),
-    passport.authenticate('jwt', { session: false }),
+    // passport.authenticate('jwt', { session: false }),
     cacheMiddleware,
     cacheInterceptor(3 * 60),
     invalidateInterceptor,
@@ -156,6 +156,10 @@ app.use('/v1/users',
     cacheInterceptor(3 * 60),
     invalidateInterceptor,
     userRouter)
+
+app.get('*', (req, res) => {
+    return res.sendFile(path.join(__dirname, 'frontend/dist'))
+})
 
 app.use(handleError)
 
