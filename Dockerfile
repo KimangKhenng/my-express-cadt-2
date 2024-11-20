@@ -4,5 +4,6 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm install
 COPY . .
+RUN (cd frontend && npm install && npm run build)
 EXPOSE 4000
 CMD ["npm", "run", "dev"]
